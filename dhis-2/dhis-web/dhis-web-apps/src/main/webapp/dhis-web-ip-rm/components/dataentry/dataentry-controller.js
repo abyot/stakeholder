@@ -100,7 +100,9 @@ iprm.controller('DataEntryController',
                             }, {});
 
                             MetaDataFactory.getByProperty('programs', 'mappingTemplate', 'stakeholderMapping' ).then(function( programs ){
-                                $scope.model.programs = programs;
+                                $scope.model.programs = programs.filter(function(pr){
+                                    return CommonUtils.userHasWriteAccess( 'ACCESSIBLE_PROGRAMS', pr.id);
+                                });
                                 $scope.model.periodType = 'Yearly';
                                 $scope.model.periods = PeriodService.getPeriods( $scope.model.periodType, $scope.model.periodOffset,  $scope.model.openFuturePeriods );
 
