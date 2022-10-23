@@ -1,0 +1,169 @@
+<div ng-controller="ReportController">
+
+    <h2 class="center">
+        {{'ip_rm_report' | translate}}
+    </h2>
+    <div class="row small-vertical-spacing">
+        <div class="col-sm-12">
+            <ui-select ng-model="model.selectedProgram"
+                       theme="select2"
+                       style="width:100%;">
+                <ui-select-match allow-clear="true" class="form-control-ui-select" placeholder="{{model.programs && model.programs.length > 0 ? 'please_select_program' : 'empty'| translate}}">{{$select.selected.displayName|| $select.selected}}</ui-select-match>
+                <ui-select-choices repeat="program in model.programs | filter: $select.search | limitTo:maxOptionSize">
+                    <span ng-bind-html="program.displayName | highlight: $select.search"></span>
+                </ui-select-choices>
+            </ui-select>
+        </div>
+    </div>
+
+
+    <div ng-if="model.selectedProgram">
+        <!-- selection begins-->
+        <div class="row col-sm-12 vertical-spacing">
+            <div class="col-sm-2 yellow-info-area">
+                <table class="table table-bordered table-responsive">
+                    <tr>
+                        <th>
+                            {{'geographic_area'| translate}}
+                        </th>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="input-group">
+                                <input type="text"
+                                       name="foo"
+                                       class="form-control cursor-pointer"
+                                       placeholder="{{'please_select'| translate}}"
+                                       title="{{'select_from_tree'| translate}}"
+                                       ng-model="selectedOrgUnit.displayName"
+                                       ng-readonly="{{true}}"
+                                       ng-required="true"
+                                       ng-click="showOrgUnitTree()">
+                                <span class="input-group-btn">
+                                    <button class="btn btn-default" type="button" title="{{'select_from_tree'| translate}}" ng-disabled="d2Disabled" ng-click="showOrgUnitTree(d2Object)">
+                                        <i class="fa fa-plus-square-o"></i>
+                                    </button>
+                                </span>
+                            </div>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <div class="col-sm-2 green-info-area">
+                <table class="table table-bordered table-responsive">
+                    <tr>
+                        <th>
+                            {{'period'| translate}}
+                            <div class="pull-right">
+                                <button type="button"
+                                        class="btn btn-default remove-button-padding"
+                                        ng-click="getPeriods('PRV')"
+                                        title="{{'previous_periods'| translate}}">
+                                    <i class="fa fa-backward"></i>
+                                </button>
+
+                                <button type="button"
+                                        class="btn btn-default remove-button-padding"
+                                        ng-disabled="model.periodOffset > model.openFuturePeriods"
+                                        ng-click="getPeriods('NXT')"
+                                        title="{{'next_periods'| translate}}">
+                                    <i class="fa fa-forward"></i>
+                                </button>
+                            </div>
+                        </th>
+                    </tr>
+                    <tr>
+                        <td>
+                            <ui-select ng-model="model.selectedPeriod"
+                                    theme="select2"
+                                    style="width:100%;">
+                                <ui-select-match allow-clear="true" class="form-control-ui-select" placeholder="{{model.periods.length > 0 ? 'select_or_search' : 'empty'| translate}}">{{$select.selected.displayName|| $select.selected}}</ui-select-match>
+                                <ui-select-choices repeat="period in model.periods | filter: $select.search | limitTo:maxOptionSize">
+                                    <span ng-bind-html="period.displayName | highlight: $select.search"></span>
+                                </ui-select-choices>
+                            </ui-select>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <div class="col-sm-8 blue-info-area">
+                <table class="table table-bordered table-responsive">
+                    <tr>
+                        <th ng-repeat="category in model.selectedAttributeCategoryCombo.categories">
+                            {{category.displayName}}
+                        </th>
+                    </tr>
+                    <tr>
+                        <td ng-repeat="category in model.selectedAttributeCategoryCombo.categories">
+                            <ui-select ng-model="model.dataFilter[category.id]"
+                                       theme="select2"
+                                       on-select="processFilters(category)"
+                                       style="width:100%;">
+                                <ui-select-match allow-clear="true" class="form-control" placeholder="{{category.categoryOptions && category.categoryOptions.length > 0 ? 'select_or_search' : 'empty'| translate}}">{{$select.selected.displayName|| $select.selected}}</ui-select-match>
+                                <ui-select-choices  repeat="option in category.categoryOptions | filter: $select.search | limitTo:maxOptionSize">
+                                    <span ng-bind-html="option.displayName | highlight: $select.search"></span>
+                                </ui-select-choices>
+                            </ui-select>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+        <!-- selection ends-->
+
+        <!-- report begins -->
+        <div class="row col-sm-12 vertical-spacing">
+            <div class="alert alert-danger" ng-if="!selectedOrgUnit">
+                {{'please_select_geographic_area'| translate}}
+            </div>
+            <div class="alert alert-danger" ng-if="selectedOrgUnit.id && !model.selectedPeriod">
+                {{'please_select_period'| translate}}
+            </div>
+            <div ng-if="!model.reportStarted && model.reportReady && model.activities.length > 0">
+                <span class=" hideInPrint">
+                    <span class="dropdown">
+                        <label class="btn btn-default dropdown-toggle" data-toggle="dropdown" ng-attr-title="{{'download_as'| translate}}"><i class="fa fa-download"></i></label>
+                        <ul class="dropdown-menu">
+                            <li><h6 class="dropdown-header">{{'download_as'| translate}}</h6></li>
+                            <li class="divider"></li>
+                            <li><a href ng-click="exportData()">{{'csv'| translate}}</a></li>
+                            <li><a href onclick="javascript:window.print()">{{'pdf'| translate}}</a></li>
+                        </ul>
+                    </span>
+                </span>
+                <label class="long-horizontal-spacing">
+                    {{'total_no_activities'| translate}} = {{ (model.activities | dataFilter:model.dataFilter).length }}
+                </label>
+                <div id="exportTable" class="table-scroll">
+                    <table class="table table-bordered table-responsive">
+                        <thead>
+                            <tr>
+                                <th class="sticky center fixed-input-width" ng-repeat="header in model.headers">
+                                    {{header.displayName}}
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr ng-repeat="activity in model.activities | dataFilter:model.dataFilter">
+                                <td ng-repeat="header in model.headers">
+                                    {{activity[header.id]}}
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="alert alert-warning" ng-if="!model.reportStarted && model.reportReady && model.activities.length === 0">
+                {{'no_data_exists'| translate}}
+            </div>
+            <div class="alert alert-info" ng-if="model.reportStarted && !model.reportReady">
+                <img src="../images/ajax-loader-bar.gif" alt="{{'in_progress'| translate}}"/><br>
+                {{'fetching_data'| translate}}
+            </div>
+
+        </div>
+        <!-- report ends -->
+    </div>
+
+</div>

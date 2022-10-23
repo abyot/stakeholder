@@ -1,0 +1,28 @@
+<div class="page" id="mainPage">
+
+    <div ng-if="!model.metaDataCached" class="font-16">
+        <img src="../images/ajax-loader-bar.gif" alt="{{'in_progress'| translate}}"/><br>
+        {{'loading_metadata'| translate}}
+    </div>
+
+    <div ng-if="model.metaDataCached">
+
+        <div class="row">
+            <div class="col-sm-12">
+                <div equal-height-nav-tabs>
+                    <tabset justified="true">
+                        <tab heading="{{horizontalMenu.title| translate}}"
+                             class="{{getMenuStyle(horizontalMenu)}}"
+                             ng-repeat="horizontalMenu in model.horizontalMenus | orderBy:'order'"
+                             active="horizontalMenu.active"
+                             ng-click="resetView(horizontalMenu, $event)">
+                            <div ng-include="horizontalMenu.view"></div>
+                        </tab>
+                    </tabset>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+</div>

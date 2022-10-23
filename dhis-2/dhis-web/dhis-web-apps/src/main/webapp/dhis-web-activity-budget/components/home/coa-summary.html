@@ -1,0 +1,14 @@
+<table class="table table-bordered table-responsive vertical-spacing">
+    <thead>
+        <tr>
+            <th class="sticky center">{{'government_exp_item' | translate}}</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr ng-repeat="item in model.coa">
+            <td>
+                {{item.displayName}}
+            </td>
+        </tr>
+    </tbody>
+</table>

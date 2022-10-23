@@ -1,0 +1,14 @@
+<table class="table table-bordered table-responsive vertical-spacing">
+    <thead>
+        <tr>
+            <th class="sticky center">{{'hstp_strategic_objective' | translate}}</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr ng-repeat="item in model.hstp">
+            <td>
+                {{item.displayName}}
+            </td>
+        </tr>
+    </tbody>
+</table>

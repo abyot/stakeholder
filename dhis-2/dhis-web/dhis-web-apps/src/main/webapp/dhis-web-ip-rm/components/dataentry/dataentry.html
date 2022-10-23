@@ -1,0 +1,217 @@
+<div ng-controller="DataEntryController">
+    <h2 class="center">
+        {{'ip_rm_data_entry' | translate}}
+    </h2>
+
+    <div class="row small-vertical-spacing">
+        <div class="col-sm-12">
+            <ui-select ng-model="model.selectedProgram"
+                       theme="select2"
+                       style="width:100%;">
+                <ui-select-match allow-clear="true" class="form-control-ui-select" placeholder="{{model.programs && model.programs.length > 0 ? 'please_select_program' : 'empty'| translate}}">{{$select.selected.displayName|| $select.selected}}</ui-select-match>
+                <ui-select-choices repeat="program in model.programs | filter: $select.search | limitTo:maxOptionSize">
+                    <span ng-bind-html="program.displayName | highlight: $select.search"></span>
+                </ui-select-choices>
+            </ui-select>
+        </div>
+    </div>
+
+    <!-- selection begins-->
+    <div ng-if="model.selectedProgram" class="vertical-spacing">
+        <div class="panel panel-custom">
+            <div class="panel panel-heading cursor-pointer" ng-click="model.showFillingOrganization = !model.showFillingOrganization">
+                {{'filling_organization' | translate}}
+                <div class="pull-right">
+                    <span ng-show="model.showFillingOrganization">
+                        <i class="fa fa-angle-double-up fa-2x vertical-center" title="{{'collapse'| translate}}"></i>
+                    </span>
+                    <span ng-show="!model.showFillingOrganization">
+                        <i class="fa fa-angle-double-down  fa-2x vertical-center" title="{{'expand'| translate}}"></i>
+                    </span>
+                </div>
+            </div>
+            <div class="panel panel-body" ng-if="model.showFillingOrganization">
+                <div class="bordered-div col-sm-4">
+                    <table class="table table-responsive table-striped vertical-spacing ">
+                        <tr>
+                            <td>
+                                {{'organization_name' | translate}}
+                            </td>
+                            <td>
+                                {{model.fillingOrganization.displayName}}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                {{'organization_type' | translate}}
+                            </td>
+                            <td>
+                                {{model.fillingOrganization.organizationType}}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                {{'organization_fy_start' | translate}}
+                            </td>
+                            <td>
+                                {{model.fillingOrganization.organizationFiscalYearStart}}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                {{'organization_fy_end' | translate}}
+                            </td>
+                            <td>
+                                {{model.fillingOrganization.organizationFiscalYearEnd}}
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="bordered-div col-sm-4">
+                    <table class="table table-responsive table-striped vertical-spacing ">
+                        <tr>
+                            <td>
+                                {{'contact_name' | translate}}
+                            </td>
+                            <td>
+                                {{model.fillingOrganization.contactName}}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                {{'contact_mobile_phone' | translate}}
+                            </td>
+                            <td>
+                                {{model.fillingOrganization.contactMobilePhone}}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                {{'contact_office_number' | translate}}
+                            </td>
+                            <td>
+                                {{model.fillingOrganization.contactOfficeNumber}}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                {{'contact_email' | translate}}
+                            </td>
+                            <td>
+                                {{model.fillingOrganization.contactEmail}}
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="bordered-div col-sm-4">
+                    <table class="table table-responsive table-striped vertical-spacing">
+                        <tr>
+                            <td>
+                                {{'finance_manager_name' | translate}}
+                            </td>
+                            <td>
+                                {{model.fillingOrganization.financeManagerName}}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                {{'finance_mobile_phone' | translate}}
+                            </td>
+                            <td>
+                                {{model.fillingOrganization.financeMobilePhone}}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                {{'finance_office_number' | translate}}
+                            </td>
+                            <td>
+                                {{model.fillingOrganization.financeOfficeNumber}}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                {{'finance_email' | translate}}
+                            </td>
+                            <td>
+                                {{model.fillingOrganization.finaceEmail}}
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="selection-group">
+            <div class="col-sm-3 green-info-area">
+                <table class="table table-bordered table-responsive">
+                    <tr>
+                        <th>
+                            {{'period'| translate}}
+                        </th>
+                        <th>
+                        </th>
+                    </tr>
+                    <tr>
+                        <td>
+                            <ui-select ng-model="model.selectedPeriod"
+                                    theme="select2"
+                                    style="width:100%;">
+                                <ui-select-match allow-clear="true" class="form-control-ui-select" placeholder="{{model.periods.length > 0 ? 'select_or_search' : 'empty'| translate}}">{{$select.selected.displayName|| $select.selected}}</ui-select-match>
+                                <ui-select-choices repeat="period in model.periods | filter: $select.search | limitTo:maxOptionSize">
+                                    <span ng-bind-html="period.displayName | highlight: $select.search"></span>
+                                </ui-select-choices>
+                            </ui-select>
+                        </td>
+                        <td>
+                            <button type="button"
+                                    class="btn btn-default pull-left"
+                                    ng-click="getPeriods('PRV')"
+                                    title="{{'previous_periods'| translate}}">
+                                <i class="fa fa-backward"></i>
+                            </button>
+
+                            <button type="button"
+                                    class="btn btn-default pull-right"
+                                    ng-disabled="model.periodOffset > model.openFuturePeriods"
+                                    ng-click="getPeriods('NXT')"
+                                    title="{{'next_periods'| translate}}">
+                                <i class="fa fa-forward"></i>
+                            </button>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <div class="col-sm-9 blue-info-area add-small-left-padding">
+                <table class="table table-bordered table-responsive">
+                    <tr>
+                        <th ng-repeat="category in model.selectedAttributeCategoryCombo.categories">
+                            {{category.displayName}}
+                        </th>
+                    </tr>
+                    <tr>
+                        <td ng-repeat="category in model.selectedAttributeCategoryCombo.categories">
+                            <ui-select ng-model="category.selectedOption"
+                                       theme="select2"
+                                       on-select="getCategoryOptions(category)"
+                                       style="width:100%;">
+                                <ui-select-match allow-clear="true" class="form-control-ui-select" placeholder="{{category.categoryOptions && category.categoryOptions.length > 0 ? 'select_or_search' : 'empty'| translate}}">{{$select.selected.displayName|| $select.selected}}</ui-select-match>
+                                <ui-select-choices  repeat="option in category.categoryOptions | filter: $select.search | limitTo:maxOptionSize">
+                                    <span ng-bind-html="option.displayName | highlight: $select.search"></span>
+                                </ui-select-choices>
+                            </ui-select>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+    <!-- selection ends-->
+
+    <!-- form begins -->
+    <form name="outerForm" novalidate>
+        <div class="small-vertical-spacing remove-left-padding">
+            <div ng-include="'components/dataentry/dataentry-form.html'"></div>
+        </div>
+    </form>
+    <!-- form ends -->
+</div>

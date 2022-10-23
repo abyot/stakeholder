@@ -1,0 +1,468 @@
+<table class="table table-bordered table-responsive vertical-spacing">
+    <thead>
+        <tr>
+            <th></th>
+            <th class="sticky center" colspan="{{deg.dataElements.length}}" ng-repeat="deg in horizontalMenu.dataElementGroups">
+                <span ng-if="deg.dataElements.length > 1">
+                    {{deg.displayName}}
+                </span>
+            </th>
+        </tr>
+        <tr>
+            <th></th>
+            <th class="sticky center" ng-repeat="dataElement in horizontalMenu.dataElements">
+                {{dataElement.displayName}}
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr ng-if="model.formState !== 'EDIT'">
+            <td>
+                <button class="btn btn-success small-horizontal-spacing" type="button" title="{{'save'| translate}}" ng-disabled="activity.event !== model.selectedActivity.event" ng-click="addActivity()">
+                    <i class="fa fa-floppy-o"></i>
+                </button>
+            </td>
+            <td ng-repeat="de in horizontalMenu.dataElements">
+                <ng-form name="innerAddForm">
+                    <span ng-if="de.optionSetValue">
+                        <ui-select theme="select2"
+                                   ng-model="newActivity[de.id]"
+                                   name="foo"
+                                   ng-disabled="model.selectedActivity"
+                                   ng-required="de.compulsory"
+                                   d2-tab-index
+                                   tabindex={{tabOrder[de.id][oco.id][aoc.id]}}
+                                   tabname="foo"
+                                   style="width:100%;">
+                            <ui-select-match allow-clear="true"
+                                             class="form-control-ui-select fixed-input-width"
+                                             ng-class="getInputNotifcationClass(de.id)"
+                                             placeholder="{{'select_or_search'| translate}}">
+                                {{$select.selected.displayName|| $select.selected}}
+                            </ui-select-match>
+                            <ui-select-choices repeat="option.displayName as option in model.optionSetsById[de.optionSet.id].options | cascadeFilter:de:newActivity:model.optionSetsById:model.optionGroups:model.dataElementsByCode | filter: $select.search | limitTo:maxOptionSize">
+                                <span ng-bind-html="option.displayName | highlight: $select.search"></span>
+                            </ui-select-choices>
+                        </ui-select>
+                    </span>
+                    <span ng-if="!de.optionSetValue">
+                        <span ng-switch="de.valueType">
+                            <span ng-switch-when="ORG_UNIT">
+                                <div class="input-group">
+                                    <input type="text"
+                                           name="foo"
+                                           ng-disabled="model.selectedActivity"
+                                           class="form-control cursor-pointer fixed-input-width"
+                                           placeholder="{{'please_select'| translate}}"
+                                           title="{{'select_from_tree'| translate}}"
+                                           ng-model="newActivity[de.id]"
+                                           ng-readonly="{{true}}"
+                                           ng-required="de.compulsory"
+                                           ng-click="showOrgUnitTree(newActivity)">
+                                    <span class="input-group-btn">
+                                        <button class="btn btn-default" type="button" title="{{'select_from_tree'| translate}}" ng-click="showOrgUnitTree(newActivity)">
+                                            <i class="fa fa-plus-square-o"></i>
+                                        </button>
+                                    </span>
+                                </div>
+                            </span>
+                            <span ng-switch-when="LONG_TEXT">
+                                <textarea rows="5"
+                                          name="foo"
+                                          ng-disabled="model.selectedActivity"
+                                          ng-model="newActivity[de.id]"
+                                          ng-required="de.compulsory"
+                                          d2-tab-index
+                                          tabindex={{tabOrder[de.id][oco.id][aoc.id]}}
+                                          tabname="foo"
+                                          class="form-control fixed-input-width"
+                                          ng-class="getInputNotifcationClass(de.id)"
+                                          d2-blur="processCostCategory(de.id)">
+                                </textarea>
+                            </span>
+                            <span ng-switch-when="TEXT">
+                                <input type="text"
+                                       name="foo"
+                                       ng-model="newActivity[de.id]"
+                                       ng-required="de.compulsory"
+                                       ng-disabled="model.selectedActivity"
+                                       d2-tab-index
+                                       tabindex={{tabOrder[de.id][oco.id][aoc.id]}}
+                                       tabname="foo"
+                                       class="form-control fixed-input-width"
+                                       ng-class="getInputNotifcationClass(de.id)"
+                                       d2-blur="processCostCategory(de.id)">
+                            </span>
+                            <span ng-switch-when="NUMBER">
+                                <input type="number"
+                                       name="foo"
+                                       ng-disabled="model.selectedActivity"
+                                       ng-required="de.compulsory"
+                                       d2-number-validator
+                                       number-type={{de.valueType}}
+                                       ng-model="newActivity[de.id]"
+                                       ng-required="de.compulsory"
+                                       d2-tab-index
+                                       tabindex={{tabOrder[de.id][oco.id][aoc.id]}}
+                                       tabname="foo"
+                                       class="form-control fixed-input-width"
+                                       ng-class="getInputNotifcationClass(de.id)"
+                                       d2-blur="processCostCategory(de.id)">
+                            </span>
+                            <span ng-switch-when="INTEGER">
+                                <input type="number"
+                                       name="foo"
+                                       ng-disabled="model.selectedActivity"
+                                       d2-number-validator
+                                       number-type={{de.valueType}}
+                                       ng-model="newActivity[de.id]"
+                                       ng-required="de.compulsory"
+                                       d2-tab-index
+                                       tabindex={{tabOrder[de.id][oco.id][aoc.id]}}
+                                       tabname="foo"
+                                       class="form-control fixed-input-width"
+                                       ng-class="getInputNotifcationClass(de.id)"
+                                       d2-blur="processCostCategory(de.id)">
+                            </span>
+                            <span ng-switch-when="INTEGER_POSITIVE">
+                                <input type="number"
+                                       name="foo"
+                                       ng-disabled="model.selectedActivity"
+                                       d2-number-validator
+                                       number-type={{de.valueType}}
+                                       ng-model="newActivity[de.id]"
+                                       ng-required="de.compulsory"
+                                       d2-tab-index
+                                       tabindex={{tabOrder[de.id][oco.id][aoc.id]}}
+                                       tabname="foo"
+                                       class="form-control fixed-input-width"
+                                       ng-class="getInputNotifcationClass(de.id)"
+                                       d2-blur="processCostCategory(de.id)">
+                            </span>
+                            <span ng-switch-when="INTEGER_NEGATIVE">
+                                <input type="number"
+                                       name="foo"
+                                       ng-disabled="model.selectedActivity"
+                                       d2-number-validator
+                                       number-type={{de.valueType}}
+                                       ng-model="newActivity[de.id]"
+                                       ng-required="de.compulsory"
+                                       d2-tab-index
+                                       tabindex={{tabOrder[de.id][oco.id][aoc.id]}}
+                                       tabname="foo"
+                                       class="form-control fixed-input-width"
+                                       ng-class="getInputNotifcationClass(de.id)"
+                                       d2-blur="processCostCategory(de.id)">
+                            </span>
+                            <span ng-switch-when="INTEGER_ZERO_OR_POSITIVE">
+                                <input type="number"
+                                       name="foo"
+                                       ng-disabled="model.selectedActivity"
+                                       d2-number-validator
+                                       number-type={{de.valueType}}
+                                       ng-model="newActivity[de.id]"
+                                       ng-required="de.compulsory"
+                                       d2-tab-index
+                                       tabindex={{tabOrder[de.id][oco.id][aoc.id]}}
+                                       tabname="foo"
+                                       class="form-control fixed-input-width"
+                                       ng-class="getInputNotifcationClass(de.id)"
+                                       d2-blur="processCostCategory(de.id)">
+                            </span>
+                            <span ng-switch-when="TRUE_ONLY">
+                                <input type="checkbox"
+                                       name="foo"
+                                       ng-disabled="model.selectedActivity"
+                                       ng-model="newActivity[de.id]"
+                                       ng-required="de.compulsory"
+                                       d2-tab-index
+                                       tabindex={{tabOrder[de.id][oco.id][aoc.id]}}
+                                       tabname="foo"
+                                       class="form-control fixed-input-width"
+                                       ng-class="getInputNotifcationClass(de.id)"
+                                       d2-blur="processCostCategory(de.id)">
+                            </span>
+                            <span ng-switch-when="PERCENTAGE">
+                                <input type="number"
+                                       name="foo"
+                                       ng-disabled="model.selectedActivity"
+                                       d2-number-validator
+                                       number-type={{de.valueType}}
+                                       ng-model="newActivity[de.id]"
+                                       ng-required="de.compulsory"
+                                       d2-tab-index
+                                       tabindex={{tabOrder[de.id][oco.id][aoc.id]}}
+                                       tabname="foo"
+                                       class="form-control fixed-input-width"
+                                       ng-class="getInputNotifcationClass(de.id)"
+                                       d2-blur="processCostCategory(de.id)">
+                            </span>
+                            <span ng-switch-when="BOOLEAN">
+                                <ui-select theme="select2"
+                                           ng-model="newActivity[de.id]"
+                                           ng-required="de.compulsory"
+                                           name="foo"
+                                           ng-disabled="model.selectedActivity"
+                                           d2-tab-index
+                                           tabindex={{tabOrder[de.id][oco.id][aoc.id]}}
+                                           tabname="foo"
+                                           style="width:100%;">
+                                    <ui-select-match allow-clear="true"
+                                                     class="form-control-ui-select fixed-input-width"
+                                                     ng-class="getInputNotifcationClass(de.id)"
+                                                     placeholder="{{'select_or_search'| translate}}">
+                                        {{$select.selected.displayName|| $select.selected}}
+                                    </ui-select-match>
+                                    <ui-select-choices repeat="option.value as option in model.booleanValues | filter: $select.search">
+                                        <span ng-bind-html="option.displayName | highlight: $select.search"></span>
+                                    </ui-select-choices>
+                                </ui-select>
+                            </span>
+                            <span ng-switch-default>
+                                <div class="alert alert-danger form-control fixed-input-width">
+                                    {{'unsupported_value_type'| translate}}:  {{de.valueType}}
+                                </div>
+                            </span>
+                        </span>
+                    </span>
+                    <span ng-messages="innerAddForm.foo.$error" ng-if="interacted(innerAddForm.foo)" class="required" ng-messages-include="../dhis-web-commons/angular-forms/error-messages.html">
+                    </span>
+                </ng-form>
+            </td>
+        </tr>
+        <tr ng-repeat="activity in model.activities" ng-class="{'selected-activity': model.selectedActivity && activity.event === model.selectedActivity.event}">
+            <td>
+                <div class="fixed-input-width" ng-if="model.selectedActivity && activity.event === model.selectedActivity.event">
+                    <button class="btn btn-default small-horizontal-spacing" type="button" title="{{'cancel'| translate}}" ng-if="model.formState === 'EDIT'"  ng-click="cancelEdit(activity)">
+                        <i class="fa fa-undo"></i>
+                    </button>
+                    <button class="btn btn-success small-horizontal-spacing" type="button" title="{{'update'| translate}}" ng-if="model.formState === 'EDIT'" ng-click="updateActivity(activity)">
+                        <i class="fa fa-floppy-o"></i>
+                    </button>
+                    <button class="btn btn-danger small-horizontal-spacing" type="button" title="{{'delete'| translate}}" ng-if="model.formState !== 'EDIT'" ng-click="deleteActivity(activity)">
+                        <i class="fa fa-trash-o"></i>
+                    </button>
+                </div>
+                <div class="fixed-input-width" ng-if="!model.selectedActivity">
+                    <button class="btn btn-default small-horizontal-spacing" type="button" title="{{'edit'| translate}}" ng-if="model.formState !== 'EDIT'" ng-click="showEdit(activity)">
+                        <i class="fa fa-pencil-square-o"></i>
+                    </button>
+                    <button class="btn btn-primary small-horizontal-spacing" type="button" title="{{'copy'| translate}}" ng-if="model.formState !== 'EDIT'" ng-click="copyActivity(activity)">
+                        <i class="fa fa-files-o"></i>
+                    </button>
+                    <button class="btn btn-danger small-horizontal-spacing" type="button" title="{{'delete'| translate}}" ng-if="model.formState !== 'EDIT'" ng-click="deleteActivity(activity)">
+                        <i class="fa fa-trash-o"></i>
+                    </button>
+                </div>
+            </td>
+            <td ng-repeat="de in horizontalMenu.dataElements">
+                <ng-form name="innerUpdateForm">
+                    <span ng-if="de.optionSetValue">
+                        <ui-select theme="select2"
+                                   ng-model="activity[de.id]"
+                                   ng-required="de.compulsory"
+                                   name="foo"
+                                   ng-disabled="activity.event !== model.selectedActivity.event"
+                                   d2-tab-index
+                                   tabindex={{tabOrder[de.id][oco.id][aoc.id]}}
+                                   tabname="foo"
+                                   style="width:100%;">
+                            <ui-select-match allow-clear="true"
+                                             class="form-control-ui-select fixed-input-width"
+                                             ng-class="getInputNotifcationClass(de.id)"
+                                             placeholder="{{'select_or_search'| translate}}">
+                                {{$select.selected.displayName|| $select.selected}}
+                            </ui-select-match>
+                            <ui-select-choices repeat="option.displayName as option in model.optionSetsById[de.optionSet.id].options | filter: $select.search | limitTo:maxOptionSize">
+                                <span ng-bind-html="option.displayName | highlight: $select.search"></span>
+                            </ui-select-choices>
+                        </ui-select>
+                    </span>
+                    <span ng-if="!de.optionSetValue">
+                        <span ng-switch="de.valueType">
+                            <span ng-switch-when="ORG_UNIT">
+                                <div class="input-group">
+                                    <input type="text"
+                                           name="foo"
+                                           ng-disabled="activity.event !== model.selectedActivity.event"
+                                           class="form-control cursor-pointer fixed-input-width"
+                                           placeholder="{{'please_select'| translate}}"
+                                           title="{{'select_from_tree'| translate}}"
+                                           ng-model="activity[de.id]"
+                                           ng-readonly="{{true}}"
+                                           ng-required="de.compulsory"
+                                           ng-click="showOrgUnitTree(activity)">
+                                    <span class="input-group-btn">
+                                        <button class="btn btn-default" type="button" title="{{'select_from_tree'| translate}}" ng-disabled="activity.event !== model.selectedActivity.event" ng-click="showOrgUnitTree(activity)">
+                                            <i class="fa fa-plus-square-o"></i>
+                                        </button>
+                                    </span>
+                                </div>
+                            </span>
+                            <span ng-switch-when="LONG_TEXT">
+                                <textarea rows="5"
+                                          name="foo"
+                                          ng-disabled="activity.event !== model.selectedActivity.event"
+                                          ng-model="activity[de.id]"
+                                          ng-required="de.compulsory"
+                                          d2-tab-index
+                                          tabindex={{tabOrder[de.id][oco.id][aoc.id]}}
+                                          tabname="foo"
+                                          class="form-control fixed-input-width"
+                                          ng-class="getInputNotifcationClass(de.id)"
+                                          d2-blur="processCostCategory(de.id, activity)">
+                                </textarea>
+                            </span>
+                            <span ng-switch-when="TEXT">
+                                <input type="text"
+                                       name="foo"
+                                       ng-disabled="activity.event !== model.selectedActivity.event"
+                                       ng-model="activity[de.id]"
+                                       ng-required="de.compulsory"
+                                       d2-tab-index
+                                       tabindex={{tabOrder[de.id][oco.id][aoc.id]}}
+                                       tabname="foo"
+                                       class="form-control fixed-input-width"
+                                       ng-class="getInputNotifcationClass(de.id)"
+                                       d2-blur="processCostCategory(de.id, activity)">
+                            </span>
+                            <span ng-switch-when="NUMBER">
+                                <input type="number"
+                                       name="foo"
+                                       ng-disabled="activity.event !== model.selectedActivity.event"
+                                       d2-number-validator
+                                       number-type={{de.valueType}}
+                                       ng-model="activity[de.id]"
+                                       ng-required="de.compulsory"
+                                       d2-tab-index
+                                       tabindex={{tabOrder[de.id][oco.id][aoc.id]}}
+                                       tabname="foo"
+                                       class="form-control fixed-input-width"
+                                       ng-class="getInputNotifcationClass(de.id)"
+                                       d2-blur="processCostCategory(de.id, activity)">
+                            </span>
+                            <span ng-switch-when="INTEGER">
+                                <input type="number"
+                                       name="foo"
+                                       ng-disabled="activity.event !== model.selectedActivity.event"
+                                       d2-number-validator
+                                       number-type={{de.valueType}}
+                                       ng-model="activity[de.id]"
+                                       ng-required="de.compulsory"
+                                       d2-tab-index
+                                       tabindex={{tabOrder[de.id][oco.id][aoc.id]}}
+                                       tabname="foo"
+                                       class="form-control fixed-input-width"
+                                       ng-class="getInputNotifcationClass(de.id)"
+                                       d2-blur="processCostCategory(de.id, activity)">
+                            </span>
+                            <span ng-switch-when="INTEGER_POSITIVE">
+                                <input type="number"
+                                       name="foo"
+                                       ng-disabled="activity.event !== model.selectedActivity.event"
+                                       d2-number-validator
+                                       number-type={{de.valueType}}
+                                       ng-model="activity[de.id]"
+                                       ng-required="de.compulsory"
+                                       d2-tab-index
+                                       tabindex={{tabOrder[de.id][oco.id][aoc.id]}}
+                                       tabname="foo"
+                                       class="form-control fixed-input-width"
+                                       ng-class="getInputNotifcationClass(de.id)"
+                                       d2-blur="processCostCategory(de.id, activity)">
+                            </span>
+                            <span ng-switch-when="INTEGER_NEGATIVE">
+                                <input type="number"
+                                       name="foo"
+                                       ng-disabled="activity.event !== model.selectedActivity.event"
+                                       d2-number-validator
+                                       number-type={{de.valueType}}
+                                       ng-model="activity[de.id]"
+                                       ng-required="de.compulsory"
+                                       d2-tab-index
+                                       tabindex={{tabOrder[de.id][oco.id][aoc.id]}}
+                                       tabname="foo"
+                                       class="form-control fixed-input-width"
+                                       ng-class="getInputNotifcationClass(de.id)"
+                                       d2-blur="processCostCategory(de.id, activity)">
+                            </span>
+                            <span ng-switch-when="INTEGER_ZERO_OR_POSITIVE">
+                                <input type="number"
+                                       name="foo"
+                                       ng-disabled="activity.event !== model.selectedActivity.event"
+                                       d2-number-validator
+                                       number-type={{de.valueType}}
+                                       ng-model="activity[de.id]"
+                                       ng-required="de.compulsory"
+                                       d2-tab-index
+                                       tabindex={{tabOrder[de.id][oco.id][aoc.id]}}
+                                       tabname="foo"
+                                       class="form-control fixed-input-width"
+                                       ng-class="getInputNotifcationClass(de.id)"
+                                       d2-blur="processCostCategory(de.id, activity)">
+                            </span>
+                            <span ng-switch-when="TRUE_ONLY">
+                                <input type="checkbox"
+                                       name="foo"
+                                       ng-disabled="activity.event !== model.selectedActivity.event"
+                                       ng-model="activity[de.id]"
+                                       ng-required="de.compulsory"
+                                       d2-tab-index
+                                       tabindex={{tabOrder[de.id][oco.id][aoc.id]}}
+                                       tabname="foo"
+                                       class="form-control fixed-input-width"
+                                       ng-class="getInputNotifcationClass(de.id)"
+                                       d2-blur="processCostCategory(de.id, activity)">
+                            </span>
+                            <span ng-switch-when="PERCENTAGE">
+                                <input type="number"
+                                       name="foo"
+                                       ng-disabled="activity.event !== model.selectedActivity.event"
+                                       d2-number-validator
+                                       number-type={{de.valueType}}
+                                       ng-model="activity[de.id]"
+                                       ng-required="de.compulsory"
+                                       d2-tab-index
+                                       tabindex={{tabOrder[de.id][oco.id][aoc.id]}}
+                                       tabname="foo"
+                                       class="form-control fixed-input-width"
+                                       ng-class="getInputNotifcationClass(de.id)"
+                                       d2-blur="processCostCategory(de.id, activity)">
+                            </span>
+                            <span ng-switch-when="BOOLEAN">
+                                <ui-select theme="select2"
+                                           ng-model="activity[de.id]"
+                                           ng-required="de.compulsory"
+                                           name="foo"
+                                           ng-disabled="activity.event !== model.selectedActivity.event"
+                                           d2-tab-index
+                                           tabindex={{tabOrder[de.id][oco.id][aoc.id]}}
+                                           tabname="foo"
+                                           on-select="saveDataValue(de.id, oco.id, aoc)"
+                                           on-remove="saveDataValue(de.id, oco.id, aoc)"
+                                           style="width:100%;">
+                                    <ui-select-match allow-clear="true"
+                                                     class="form-control-ui-select fixed-input-width"
+                                                     ng-class="getInputNotifcationClass(de.id)"
+                                                     placeholder="{{'select_or_search'| translate}}">
+                                        {{$select.selected.displayName|| $select.selected}}
+                                    </ui-select-match>
+                                    <ui-select-choices repeat="option.value as option in model.booleanValues | filter: $select.search">
+                                        <span ng-bind-html="option.displayName | highlight: $select.search"></span>
+                                    </ui-select-choices>
+                                </ui-select>
+                            </span>
+                            <span ng-switch-default>
+                                <div class="alert alert-danger form-control fixed-input-width">
+                                    {{'unsupported_value_type'| translate}}:  {{de.valueType}}
+                                </div>
+                            </span>
+                        </span>
+                    </span>
+                    <span ng-messages="innerUpdateForm.foo.$error" ng-if="interacted(innerUpdateForm.foo)" class="required" ng-messages-include="../dhis-web-commons/angular-forms/error-messages.html">
+                    </span>
+                </ng-form>
+            </td>
+        </tr>
+    </tbody>
+</table>

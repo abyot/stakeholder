@@ -12,5 +12,17 @@
     </action>
   </package>
 
+  <package name="dhis-web-ip-rm" extends="dhis-web-commons" namespace="/dhis-web-ip-rm">
+        <action name="index" class="org.hisp.dhis.commons.action.NoAction">
+            <result name="success" type="redirect">index.html</result>
+        </action>
+    </package>
+
+    <package name="dhis-web-activity-budget" extends="dhis-web-commons" namespace="/dhis-web-activity-budget">
+        <action name="index" class="org.hisp.dhis.commons.action.NoAction">
+            <result name="success" type="redirect">index.html</result>
+        </action>
+    </package>
+
   <!-- INJECT BUNDLED APPS HERE -->
 </struts>
