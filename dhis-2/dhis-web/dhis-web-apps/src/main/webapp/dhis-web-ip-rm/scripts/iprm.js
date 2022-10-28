@@ -190,7 +190,7 @@ function getUserAccessibleDataSets(){
 }
 
 function getUserAccessiblePrograms(){
-    return dhis2.metadata.getMetaObject(null, 'ACCESSIBLE_PROGRAMS', dhis2.iprm.apiUrl + '/programs.json', 'filter=programType:eq:WITHOUT_REGISTRATION&fields=id,access[data[write]]&paging=false', 'sessionStorage', dhis2.iprm.store);
+    return dhis2.metadata.getMetaObject(null, 'ACCESSIBLE_PROGRAMS', dhis2.iprm.apiUrl + '/programs.json', 'filter=programType:eq:WITHOUT_REGISTRATION&fields=id,access[data[write,read]]&paging=false', 'sessionStorage', dhis2.iprm.store);
 }
 
 function getUserAccessibleCategoryOptions(){
