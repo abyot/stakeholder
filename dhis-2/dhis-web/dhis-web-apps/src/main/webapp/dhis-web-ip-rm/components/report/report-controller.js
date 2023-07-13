@@ -36,7 +36,9 @@ iprm.controller('ReportController',
         dataElementsById: [],
         optionGroups: [],
         headers: [],
-        dataFilter: null
+        dataFilter: null,
+        filterText: {},
+        reverse: false
     };
 
     //Fetch metadata necessary to render dataentry form
@@ -137,8 +139,9 @@ iprm.controller('ReportController',
             $scope.model.selectedProgramStage = $scope.model.selectedProgram.programStages[0];
             $scope.model.selectedAttributeCategoryCombo = $scope.model.categoryCombosById[$scope.model.selectedProgram.categoryCombo.id];
 
-            $scope.model.headers = [{id: 'orgUnitName', displayName: $translate.instant("woreda"), valueType: 'ORG_UNIT', optionSetValue: false, compulsory: true}];
-
+            var ouHeader = {id: 'orgUnitName', displayName: $translate.instant("woreda"), valueType: 'ORG_UNIT', optionSetValue: false, compulsory: true, showFilter: false};
+            $scope.model.headers.push( ouHeader);
+            $scope.model.sortHeader = ouHeader.id;
             var hasFillingOrganization = false;
             angular.forEach($scope.model.selectedAttributeCategoryCombo.categories, function(ca){
                 $scope.model.headers.push({
@@ -146,7 +149,8 @@ iprm.controller('ReportController',
                     displayName: ca.displayName,
                     valueType: 'TEXT',
                     optionSetValue: false,
-                    compulsory: true
+                    compulsory: true,
+                    showFilter: false
                 });
                 if(ca.isFillingOrganization){
                     hasFillingOrganization = true;
@@ -166,6 +170,13 @@ iprm.controller('ReportController',
                 var de = $scope.model.dataElementsById[prstde.dataElement.id];
                 if ( prstde.displayInReports && de ){
                     de.compulsory = prstde.compulsory;
+                    de.shoFilter = false;
+                    de.filterWithRange = de.valueType === 'DATE' ||
+                        de.valueType === 'NUMBER' ||
+                        de.valueType === 'INTEGER' ||
+                        de.valueType === 'INTEGER_POSITIVE' ||
+                        de.valueType === 'INTEGER_NEGATIVE' ||
+                        de.valueType === 'INTEGER_ZERO_OR_POSITIVE' ? true : false,
                     $scope.model.headers.push( de );
                 }
             });
@@ -249,7 +260,7 @@ iprm.controller('ReportController',
         if ( $scope.model.selectedPeriod && $scope.selectedOrgUnit ){
 
             var eventUrl = 'program=' + $scope.model.selectedProgram.id;
-            eventUrl += '&startDate=' + $scope.model.selectedPeriod.startDate + '&endDate=' + $scope.model.selectedPeriod.endDate;
+            eventUrl += '&occurredAfter=' + $scope.model.selectedPeriod.startDate + '&occurredBefore=' + $scope.model.selectedPeriod.endDate;
             eventUrl += '&ouMode=DESCENDANTS&paging=false&orgUnit=' + $scope.selectedOrgUnit.id;
 
             //fetch data activities
@@ -265,6 +276,14 @@ iprm.controller('ReportController',
         }
     };
 
+    /*$scope.sortItems = function(gridHeader){        
+        if ($scope.model.sortHeader && $scope.model.sortHeader.id === gridHeader.id){
+            $scope.reverse = !$scope.reverse;            
+        }        
+        $scope.model.sortHeader = {id: gridHeader.id, direction: $scope.reverse ? 'desc' : 'asc'};        
+        $scope.fetchEvents();
+    };*/
+    
     $scope.exportData = function ( name ) {
         var blob = new Blob([document.getElementById('exportTable').innerHTML], {
             type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=utf-8"

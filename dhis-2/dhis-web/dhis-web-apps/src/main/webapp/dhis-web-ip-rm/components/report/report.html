@@ -132,19 +132,43 @@
                     </span>
                 </span>
                 <label class="long-horizontal-spacing">
-                    {{'total_no_activities'| translate}} = {{ (model.activities | dataFilter:model.dataFilter).length }}
+                    {{'total_no_activities'| translate}} = {{ (model.activities | filter:model.filterText).length }}
                 </label>
                 <div id="exportTable" class="table-scroll">
                     <table class="table table-bordered table-responsive">
                         <thead>
                             <tr>
-                                <th class="sticky center fixed-input-width" ng-repeat="header in model.headers">
-                                    {{header.displayName}}
+                                <th class="sticky center fixed-input-width vertical-center cursor-pointer" ng-repeat="header in model.headers">
+                                    <span ng-click="header.id === model.sortHeader ? model.reverse = !model.reverse : model.sortHeader = header.id">{{header.displayName}}</span>
+                                    
+                                    <!-- sort icon begins -->
+                                    <span class="fa-stack hideInPrint" ng-attr-title="{{'sort' | translate}}" ng-click="header.id === model.sortHeader ? model.reverse = !model.reverse : model.sortHeader = header.id">
+                                        <span ng-class="{true: 'alert-danger'} [model.sortHeader === header.id && !model.reverse]"><i class="fa fa-sort-asc fa-stack-1x"></i></span>
+                                        <span ng-class="{true: 'alert-danger'} [model.sortHeader === header.id && model.reverse]"><i class="fa fa-sort-desc fa-stack-1x"></i></span>
+                                    </span>
+                                    <!-- sort icon ends -->
+
+                                    <!-- filter icon begins -->
+                                    <span class='pull-right hideInPrint' ng-attr-title="{{'filter' | translate}}" ng-click="header.showFilter = !header.showFilter">
+                                        <span ng-if="!header.filterWithRange" >
+                                            <span ng-class="{true: 'filter-without-content', false: 'filter-with-content'} [model.filterText[header.id] == undefined || model.filterText[header.id] == '']"><i class="fa fa-search"></i></span>
+                                        </span>
+                                        <span ng-if="header.filterWithRange">
+                                            <span ng-class="{true: 'filter-without-content', false: 'filter-with-content'} [(model.filterText[header.id].start == undefined || model.filterText[header.id].start == '') && (model.filterText[header.id].end == undefined || model.filterText[header.id].end == '')]"><i class="fa fa-search"></i></span>
+                                        </span>
+                                    </span>
+                                    <!-- filter icon ends -->
+
+                                    <!-- filter input field begins -->
+                                    <span ng-show="header.showFilter">
+                                        <input type="text" style="width: 90%;" ng-model="model.filterText[header.id]" ng-blur="filterItems(header, true, true)">
+                                    </span>
+                                    <!-- filter input field ends -->
                                 </th>
                             </tr>
                         </thead>
                         <tbody>
-                            <tr ng-repeat="activity in model.activities | dataFilter:model.dataFilter">
+                            <tr ng-repeat="activity in model.activities | filter: model.filterText | orderBy: model.sortHeader:model.reverse">
                                 <td ng-repeat="header in model.headers">
                                     {{activity[header.id]}}
                                 </td>

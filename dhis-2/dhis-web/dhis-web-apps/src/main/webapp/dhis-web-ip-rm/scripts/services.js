@@ -270,7 +270,7 @@ var iprmServices = angular.module('iprmServices', ['ngResource'])
 
 
     var getByFilter = function( filter, dataElementsById, optionSetsById ){
-        var url = DHIS2URL + '/events.json?' + filter;
+        var url = DHIS2URL + '/tracker/events.json?pageSize=5000&' + filter;
 
         /*if( startDate && endDate ){
             url += '&startDate=' + startDate + '&endDate=' + endDate;
@@ -285,9 +285,9 @@ var iprmServices = angular.module('iprmServices', ['ngResource'])
         }*/
 
         var promise = $http.get( url ).then(function(response){
-            var events = response.data && response.data.events ? response.data.events : [];
+            var events = response.data && response.data.instances ? response.data.instances : [];
             var activities = [];
-            if( response && response.data && response.data.events ){
+            if( response && response.data && response.data.instances ){
                 angular.forEach(events, function(ev){
                     var activity = {
                         eventDate: DateUtils.formatFromApiToUser(ev.eventDate),
