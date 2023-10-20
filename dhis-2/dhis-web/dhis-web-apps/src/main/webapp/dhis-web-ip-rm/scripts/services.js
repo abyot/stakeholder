@@ -290,8 +290,8 @@ var iprmServices = angular.module('iprmServices', ['ngResource'])
             if( response && response.data && response.data.instances ){
                 angular.forEach(events, function(ev){
                     var activity = {
-                        eventDate: DateUtils.formatFromApiToUser(ev.eventDate),
-                        dueDate: DateUtils.formatFromApiToUser(ev.dueDate),
+                        eventDate: DateUtils.formatFromApiToUser(ev.occurredAt),
+                        dueDate: DateUtils.formatFromApiToUser(ev.scheduledAt),
                         attributeOptionCombo: ev.attributeOptionCombo,
                         attributeCategoryOptions: ev.attributeCategoryOptions,
                         uploadedBy: ev.storedBy,

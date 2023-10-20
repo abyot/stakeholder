@@ -97,6 +97,7 @@
                         <td ng-repeat="category in model.selectedAttributeCategoryCombo.categories">
                             <ui-select ng-model="model.dataFilter[category.id]"
                                        theme="select2"
+                                       ng-disabled="true"
                                        on-select="processFilters(category)"
                                        style="width:100%;">
                                 <ui-select-match allow-clear="true" class="form-control" placeholder="{{category.categoryOptions && category.categoryOptions.length > 0 ? 'select_or_search' : 'empty'| translate}}">{{$select.selected.displayName|| $select.selected}}</ui-select-match>
